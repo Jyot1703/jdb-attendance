@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JDB Attend">
+<meta name="theme-color" content="#0F6E56">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>JDB Attendance</title>
+<style>
+  :root {
+    --green-dark: #085041;
+    --green: #0F6E56;
+    --green-mid: #1D9E75;
+    --green-light: #5DCAA5;
+    --green-pale: #E1F5EE;
+    --amber: #EF9F27;
+    --amber-pale: #FAEEDA;
+    --amber-dark: #412402;
+    --red: #E24B4A;
+    --red-pale: #FCEBEB;
+    --red-dark: #501313;
+    --text: #1a1a1a;
+    --text-mid: #555;
+    --text-muted: #888;
+    --border: #e0e0e0;
+    --surface: #f7f7f5;
+    --white: #ffffff;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--surface); color: var(--text); }
+
+  /* Header */
+  .header {
+    background: var(--green);
+    color: white;
+    padding: calc(var(--safe-top) + 16px) 16px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 9px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: white; }
+  .brand-name { font-size: 17px; font-weight: 600; }
+  .brand-sub { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+  .week-ctrl { display: flex; align-items: center; gap: 0; }
+  .week-btn { background: rgba(255,255,255,0.18); border: none; border-radius: 8px; color: white; width: 34px; height: 34px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .week-btn:active { background: rgba(255,255,255,0.32); }
+  .week-label { font-size: 13px; font-weight: 500; min-width: 140px; text-align: center; opacity: 0.95; }
+
+  /* Tabs */
+  .tabs { display: flex; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 3px; gap: 2px; }
+  .tab { flex: 1; text-align: center; padding: 6px 4px; border-radius: 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; }
+  .tab.active { background: white; color: var(--green); }
+
+  /* Summary bar */
+  .summary-bar { display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto; background: white; border-bottom: 1px solid var(--border); }
+  .summary-bar::-webkit-scrollbar { display: none; }
+  .stat-chip { flex-shrink: 0; background: var(--surface); border-radius: 10px; padding: 8px 12px; min-width: 100px; }
+  .stat-chip .val { font-size: 20px; font-weight: 600; color: var(--text); }
+  .stat-chip .val.green { color: var(--green); }
+  .stat-chip .lbl { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Main content */
+  .content { padding: 0 0 calc(var(--safe-bottom) + 80px); }
+
+  /* Day view */
+  .day-date-header { padding: 10px 14px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .day-date-label { font-size: 15px; font-weight: 600; color: var(--text); }
+  .day-date-sub { font-size: 12px; color: var(--text-muted); }
+
+  .worker-card { background: white; border-bottom: 1px solid var(--border); padding: 14px; display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+  .worker-info { flex: 1; min-width: 0; }
+  .worker-name { font-size: 15px; font-weight: 500; }
+  .worker-rate { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .status-group { display: flex; gap: 6px; flex-shrink: 0; }
+  .s-btn { border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 500; cursor: pointer; background: none; color: var(--text-muted); transition: all 0.15s; white-space: nowrap; }
+  .s-btn:active { transform: scale(0.96); }
+  .s-btn.active-P { background: var(--green-pale); border-color: var(--green-light); color: var(--green-dark); }
+  .s-btn.active-H { background: var(--amber-pale); border-color: var(--amber); color: var(--amber-dark); }
+  .s-btn.active-A { background: var(--red-pale); border-color: var(--red); color: var(--red-dark); }
+
+  /* Week view */
+  .week-table-wrap { overflow-x: auto; background: white; }
+  .week-table-wrap::-webkit-scrollbar { height: 0; }
+  table { width: 100%; border-collapse: collapse; min-width: 520px; }
+  th { padding: 10px 6px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: center; border-bottom: 1px solid var(--border); background: var(--surface); text-transform: uppercase; letter-spacing: 0.3px; }
+  th.name-col { text-align: left; padding-left: 14px; min-width: 110px; }
+  td { padding: 10px 6px; border-bottom: 1px solid var(--border); text-align: center; vertical-align: middle; }
+  td.name-col { text-align: left; padding-left: 14px; }
+  .worker-mini { display: flex; align-items: center; gap: 8px; }
+  .avatar-sm { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+  .worker-mini-name { font-size: 13px; font-weight: 500; }
+  .week-cell { width: 30px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: none; color: var(--text-muted); }
+  .week-cell:active { transform: scale(0.92); }
+  .week-cell.P { background: var(--green-pale); border-color: var(--green-light); color: var(--green-dark); }
+  .week-cell.H { background: var(--amber-pale); border-color: var(--amber); color: var(--amber-dark); }
+  .week-cell.A { background: var(--red-pale); border-color: var(--red); color: var(--red-dark); }
+  .pay-cell { font-size: 13px; font-weight: 600; color: var(--green); }
+  .today-col { background: rgba(29,158,117,0.05); }
+  tfoot tr td { background: var(--surface); font-weight: 600; font-size: 13px; }
+  .total-pay { color: var(--green-dark); font-size: 14px; font-weight: 700; }
+
+  /* Summary/payroll view */
+  .payroll-section { padding: 14px; }
+  .payroll-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .payroll-card { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px; }
+  .payroll-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--border); }
+  .payroll-row:last-child { border-bottom: none; }
+  .payroll-worker { flex: 1; }
+  .payroll-wname { font-size: 14px; font-weight: 500; }
+  .payroll-days { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .payroll-amount { font-size: 17px; font-weight: 700; color: var(--green); }
+  .payroll-total-card { background: var(--green); border-radius: 14px; padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center; }
+  .ptl { font-size: 13px; opacity: 0.8; }
+  .ptv { font-size: 28px; font-weight: 700; }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 8px 16px calc(var(--safe-bottom) + 8px);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+  .bottom-btn { flex: 1; padding: 11px; border-radius: 11px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-align: center; }
+  .btn-reset { background: var(--surface); color: var(--text-mid); }
+  .btn-reset:active { background: var(--border); }
+  .btn-export { background: var(--green); color: white; }
+  .btn-export:active { background: var(--green-dark); }
+
+  /* Toast */
+  .toast { position: fixed; top: calc(var(--safe-top) + 90px); left: 50%; transform: translateX(-50%); background: #222; color: white; border-radius: 20px; padding: 10px 20px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+
+  .empty-msg { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="brand-mark">JDB</div>
+      <div>
+        <div class="brand-name">JDB Group</div>
+        <div class="brand-sub">Attendance &amp; Payroll</div>
+      </div>
+    </div>
+    <div class="week-ctrl">
+      <button class="week-btn" onclick="changeWeek(-1)" aria-label="Previous week">&#8249;</button>
+      <div class="week-label" id="weekLabel"></div>
+      <button class="week-btn" onclick="changeWeek(1)" aria-label="Next week">&#8250;</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('day')" id="tab-day">Today</button>
+    <button class="tab" onclick="switchTab('week')" id="tab-week">This Week</button>
+    <button class="tab" onclick="switchTab('payroll')" id="tab-payroll">Payroll</button>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="stat-chip"><div class="val" id="s-present">0</div><div class="lbl">Present today</div></div>
+  <div class="stat-chip"><div class="val" id="s-absent">0</div><div class="lbl">Absent today</div></div>
+  <div class="stat-chip"><div class="val green" id="s-payroll">$0</div><div class="lbl">Week payroll</div></div>
+  <div class="stat-chip"><div class="val" id="s-days">0</div><div class="lbl">Days logged</div></div>
+</div>
+
+<div class="content" id="mainContent"></div>
+
+<div class="bottom-bar">
+  <button class="bottom-btn btn-reset" onclick="confirmReset()">&#8635; Reset week</button>
+  <button class="bottom-btn btn-export" onclick="exportSummary()">&#8595; Export summary</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKERS = [
+  { name: 'Navdeep',   rate: 330, color: '#0F6E56', bg: '#E1F5EE' },
+  { name: 'Joban',     rate: 230, color: '#185FA5', bg: '#E6F1FB' },
+  { name: 'Lakhvir',  rate: 290, color: '#BA7517', bg: '#FAEEDA' },
+  { name: 'Baljeet',  rate: 280, color: '#993556', bg: '#FBEAF0' },
+  { name: 'Gurcharan',rate: 340, color: '#533AB7', bg: '#EEEDFE' }
+];
+
+const STATUS_CYCLE = ['', 'P', 'H', 'A'];
+const STATUS_LABEL = { '': '—', P: 'Present', H: 'Half', A: 'Absent' };
+
+let weekOffset = 0;
+let currentTab = 'day';
+let att = {};
+
+function storageKey(offset) { return 'jdb_att_w' + offset; }
+function dayKey(wi, di) { return wi + '_' + di; }
+
+function load() {
+  const raw = localStorage.getItem(storageKey(weekOffset));
+  att = raw ? JSON.parse(raw) : {};
+}
+
+function save() {
+  localStorage.setItem(storageKey(weekOffset), JSON.stringify(att));
+}
+
+function getMonday(offset) {
+  const d = new Date();
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1 + offset * 7);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getWeekDays() {
+  const mon = getMonday(weekOffset);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d;
+  });
+}
+
+function todayDayIndex() {
+  const d = new Date().getDay();
+  return (d + 6) % 7;
+}
+
+function isCurrentWeek() { return weekOffset === 0; }
+
+function fmtShort(d) {
+  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function fmtDayShort(d) {
+  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric' });
+}
+
+function fmtWeekRange() {
+  const days = getWeekDays();
+  const opts = { day: 'numeric', month: 'short' };
+  return days[0].toLocaleDateString('en-AU', opts) + ' – ' + days[6].toLocaleDateString('en-AU', opts);
+}
+
+function calcWorkerPay(wi) {
+  let total = 0;
+  for (let di = 0; di < 7; di++) {
+    const s = att[dayKey(wi, di)] || '';
+    if (s === 'P') total += WORKERS[wi].rate;
+    else if (s === 'H') total += WORKERS[wi].rate * 0.5;
+  }
+  return total;
+}
+
+function calcTotalPayroll() {
+  return WORKERS.reduce((sum, _, wi) => sum + calcWorkerPay(wi), 0);
+}
+
+function cycleStatus(wi, di) {
+  const k = dayKey(wi, di);
+  const cur = att[k] || '';
+  const idx = STATUS_CYCLE.indexOf(cur);
+  const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+  att[k] = next;
+  save();
+  updateSummary();
+  if (currentTab === 'day') renderDay();
+  else if (currentTab === 'week') renderWeek();
+  else renderPayroll();
+}
+
+function updateSummary() {
+  const di = todayDayIndex();
+  let present = 0, absent = 0, daysLogged = 0;
+  WORKERS.forEach((_, wi) => {
+    const todayStatus = att[dayKey(wi, di)] || '';
+    if (todayStatus === 'P' || todayStatus === 'H') present++;
+    if (todayStatus === 'A') absent++;
+    for (let d = 0; d < 7; d++) {
+      if (att[dayKey(wi, d)]) daysLogged++;
+    }
+  });
+  document.getElementById('s-present').textContent = present;
+  document.getElementById('s-absent').textContent = absent;
+  document.getElementById('s-payroll').textContent = '$' + calcTotalPayroll().toLocaleString('en-AU');
+  document.getElementById('s-days').textContent = daysLogged;
+}
+
+function renderDay() {
+  const days = getWeekDays();
+  const di = isCurrentWeek() ? todayDayIndex() : 0;
+  const day = days[di];
+  let html = `<div class="day-date-header">
+    <div>
+      <div class="day-date-label">${day.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+      <div class="day-date-sub">Tap a button to mark attendance</div>
+    </div>
+  </div>`;
+
+  WORKERS.forEach((w, wi) => {
+    const s = att[dayKey(wi, di)] || '';
+    html += `<div class="worker-card">
+      <div class="avatar" style="background:${w.bg};color:${w.color}">${w.name.slice(0,2).toUpperCase()}</div>
+      <div class="worker-info">
+        <div class="worker-name">${w.name}</div>
+        <div class="worker-rate">$${w.rate}/day${s === 'H' ? ' · $' + (w.rate * 0.5).toFixed(0) + ' today' : s === 'P' ? ' · $' + w.rate + ' today' : ''}</div>
+      </div>
+      <div class="status-group">
+        <button class="s-btn ${s === 'P' ? 'active-P' : ''}" onclick="setStatus(${wi},${di},'P')">P</button>
+        <button class="s-btn ${s === 'H' ? 'active-H' : ''}" onclick="setStatus(${wi},${di},'H')">½</button>
+        <button class="s-btn ${s === 'A' ? 'active-A' : ''}" onclick="setStatus(${wi},${di},'A')">A</button>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function setStatus(wi, di, status) {
+  const k = dayKey(wi, di);
+  if (att[k] === status) {
+    att[k] = '';
+  } else {
+    att[k] = status;
+  }
+  save();
+  updateSummary();
+  if (currentTab === 'day') renderDay();
+  else if (currentTab === 'week') renderWeek();
+  else renderPayroll();
+}
+
+function renderWeek() {
+  const days = getWeekDays();
+  const todayDi = isCurrentWeek() ? todayDayIndex() : -1;
+
+  let th = `<tr><th class="name-col">Worker</th>`;
+  days.forEach((d, i) => {
+    th += `<th class="${i === todayDi ? 'today-col' : ''}">${d.toLocaleDateString('en-AU', { weekday: 'short' })}<br><span style="font-weight:400;font-size:10px">${d.getDate()}</span></th>`;
+  });
+  th += `<th>Pay</th></tr>`;
+
+  let rows = '';
+  WORKERS.forEach((w, wi) => {
+    const pay = calcWorkerPay(wi);
+    rows += `<tr><td class="name-col"><div class="worker-mini">
+      <div class="avatar-sm" style="background:${w.bg};color:${w.color}">${w.name.slice(0,2).toUpperCase()}</div>
+      <div class="worker-mini-name">${w.name}</div>
+    </div></td>`;
+    days.forEach((_, di) => {
+      const s = att[dayKey(wi, di)] || '';
+      rows += `<td class="${di === todayDi ? 'today-col' : ''}">
+        <button class="week-cell ${s}" onclick="cycleStatus(${wi},${di})" title="${STATUS_LABEL[s]}">${s || '·'}</button>
+      </td>`;
+    });
+    rows += `<td class="pay-cell">$${pay.toFixed(0)}</td></tr>`;
+  });
+
+  const total = calcTotalPayroll();
+  const foot = `<tr><td class="name-col" style="font-size:13px;color:#555">Total</td><td colspan="7"></td><td class="total-pay">$${total.toFixed(0)}</td></tr>`;
+
+  document.getElementById('mainContent').innerHTML = `<div class="week-table-wrap">
+    <table><thead>${th}</thead><tbody>${rows}</tbody><tfoot>${foot}</tfoot></table>
+  </div>`;
+}
+
+function renderPayroll() {
+  const days = getWeekDays();
+  let rows = '';
+  WORKERS.forEach((w, wi) => {
+    const pay = calcWorkerPay(wi);
+    let pDays = 0, hDays = 0, aDays = 0;
+    for (let di = 0; di < 7; di++) {
+      const s = att[dayKey(wi, di)] || '';
+      if (s === 'P') pDays++;
+      else if (s === 'H') hDays++;
+      else if (s === 'A') aDays++;
+    }
+    const parts = [];
+    if (pDays) parts.push(pDays + ' day' + (pDays > 1 ? 's' : '') + ' present');
+    if (hDays) parts.push(hDays + ' half day' + (hDays > 1 ? 's' : ''));
+    if (aDays) parts.push(aDays + ' absent');
+    rows += `<div class="payroll-row">
+      <div class="avatar" style="background:${w.bg};color:${w.color};width:38px;height:38px;font-size:12px">${w.name.slice(0,2).toUpperCase()}</div>
+      <div class="payroll-worker">
+        <div class="payroll-wname">${w.name}</div>
+        <div class="payroll-days">${parts.length ? parts.join(' · ') : 'No attendance marked'} · $${w.rate}/day</div>
+      </div>
+      <div class="payroll-amount">$${pay.toFixed(0)}</div>
+    </div>`;
+  });
+
+  const total = calcTotalPayroll();
+  const weekStr = days[0].toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + ' – ' + days[6].toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+
+  document.getElementById('mainContent').innerHTML = `<div class="payroll-section">
+    <div class="payroll-title">Week of ${weekStr}</div>
+    <div class="payroll-card">${rows}</div>
+    <div class="payroll-total-card">
+      <div><div class="ptl">Total weekly payroll</div><div style="font-size:11px;opacity:0.7;margin-top:3px">5 workers · week ending ${days[6].toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</div></div>
+      <div class="ptv">$${total.toLocaleString('en-AU')}</div>
+    </div>
+  </div>`;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'day') renderDay();
+  else if (tab === 'week') renderWeek();
+  else renderPayroll();
+}
+
+function changeWeek(dir) {
+  weekOffset += dir;
+  load();
+  document.getElementById('weekLabel').textContent = fmtWeekRange();
+  updateSummary();
+  switchTab(currentTab);
+}
+
+function confirmReset() {
+  if (confirm('Reset all attendance for this week?')) {
+    att = {};
+    save();
+    updateSummary();
+    switchTab(currentTab);
+    showToast('Week cleared');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function exportSummary() {
+  const days = getWeekDays();
+  const weekStr = days[0].toLocaleDateString('en-AU') + ' to ' + days[6].toLocaleDateString('en-AU');
+  let text = 'JDB Group Scaffolding — Weekly Payroll Summary\n';
+  text += 'Week: ' + weekStr + '\n';
+  text += '─────────────────────────────────────────\n\n';
+
+  WORKERS.forEach((w, wi) => {
+    const pay = calcWorkerPay(wi);
+    text += w.name + ' ($' + w.rate + '/day)\n';
+    days.forEach((d, di) => {
+      const s = att[dayKey(wi, di)] || '';
+      const label = s === 'P' ? 'Present — $' + w.rate : s === 'H' ? 'Half day — $' + (w.rate * 0.5).toFixed(0) : s === 'A' ? 'Absent — $0' : 'Not marked';
+      text += '  ' + d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) + ': ' + label + '\n';
+    });
+    text += '  Weekly total: $' + pay.toFixed(0) + '\n\n';
+  });
+
+  text += '─────────────────────────────────────────\n';
+  text += 'TOTAL PAYROLL: $' + calcTotalPayroll().toLocaleString('en-AU') + '\n';
+  text += 'Generated: ' + new Date().toLocaleString('en-AU') + '\n';
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'JDB_Payroll_' + days[0].toISOString().slice(0, 10) + '.txt';
+  a.click();
+  showToast('Summary exported!');
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
+
+load();
+document.getElementById('weekLabel').textContent = fmtWeekRange();
+updateSummary();
+renderDay();
+</script>
+</body>
+</html>
