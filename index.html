@@ -28,38 +28,26 @@
     --text-muted: #888;
     --border: #e0e0e0;
     --surface: #f7f7f5;
-    --white: #ffffff;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--surface); color: var(--text); }
 
-  /* Header */
-  .header {
-    background: var(--green);
-    color: white;
-    padding: calc(var(--safe-top) + 16px) 16px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+  .header { background: var(--green); color: white; padding: calc(var(--safe-top) + 16px) 16px 16px; position: sticky; top: 0; z-index: 100; }
   .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .header-brand { display: flex; align-items: center; gap: 10px; }
   .brand-mark { width: 36px; height: 36px; border-radius: 9px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .brand-name { font-size: 17px; font-weight: 600; }
   .brand-sub { font-size: 11px; opacity: 0.75; margin-top: 1px; }
-  .week-ctrl { display: flex; align-items: center; gap: 0; }
+  .week-ctrl { display: flex; align-items: center; }
   .week-btn { background: rgba(255,255,255,0.18); border: none; border-radius: 8px; color: white; width: 34px; height: 34px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .week-btn:active { background: rgba(255,255,255,0.32); }
   .week-label { font-size: 13px; font-weight: 500; min-width: 140px; text-align: center; opacity: 0.95; }
-
-  /* Tabs */
   .tabs { display: flex; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 3px; gap: 2px; }
   .tab { flex: 1; text-align: center; padding: 6px 4px; border-radius: 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; }
   .tab.active { background: white; color: var(--green); }
 
-  /* Summary bar */
   .summary-bar { display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto; background: white; border-bottom: 1px solid var(--border); }
   .summary-bar::-webkit-scrollbar { display: none; }
   .stat-chip { flex-shrink: 0; background: var(--surface); border-radius: 10px; padding: 8px 12px; min-width: 100px; }
@@ -67,19 +55,33 @@
   .stat-chip .val.green { color: var(--green); }
   .stat-chip .lbl { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
-  /* Main content */
-  .content { padding: 0 0 calc(var(--safe-bottom) + 80px); }
+  .sync-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px; font-size: 11px; background: var(--green-pale); color: var(--green-dark); }
+  .sync-bar.syncing { background: #FFF8E7; color: #7a5800; }
+  .sync-bar.error { background: var(--red-pale); color: var(--red-dark); }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-mid); flex-shrink: 0; }
+  .sync-bar.syncing .sync-dot { background: #EF9F27; animation: pulse 1s infinite; }
+  .sync-bar.error .sync-dot { background: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* Day view */
-  .day-date-header { padding: 10px 14px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .content { padding: 0 0 calc(var(--safe-bottom) + 90px); }
+
+  .today-totals-bar { display: flex; align-items: stretch; background: var(--green); color: white; }
+  .today-total-block { flex: 1; padding: 13px 16px; }
+  .today-total-label { font-size: 11px; opacity: 0.8; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .today-total-value { font-size: 22px; font-weight: 700; color: white; }
+  .today-divider { width: 1px; background: rgba(255,255,255,0.2); margin: 10px 0; }
+
+  .day-date-header { padding: 10px 14px; background: white; border-bottom: 1px solid var(--border); }
   .day-date-label { font-size: 15px; font-weight: 600; color: var(--text); }
-  .day-date-sub { font-size: 12px; color: var(--text-muted); }
+  .day-date-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
   .worker-card { background: white; border-bottom: 1px solid var(--border); padding: 14px; display: flex; align-items: center; gap: 12px; }
   .avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
   .worker-info { flex: 1; min-width: 0; }
   .worker-name { font-size: 15px; font-weight: 500; }
   .worker-rate { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .worker-weekly { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .worker-weekly strong { color: var(--green); font-weight: 600; }
   .status-group { display: flex; gap: 6px; flex-shrink: 0; }
   .s-btn { border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 500; cursor: pointer; background: none; color: var(--text-muted); transition: all 0.15s; white-space: nowrap; }
   .s-btn:active { transform: scale(0.96); }
@@ -87,7 +89,6 @@
   .s-btn.active-H { background: var(--amber-pale); border-color: var(--amber); color: var(--amber-dark); }
   .s-btn.active-A { background: var(--red-pale); border-color: var(--red); color: var(--red-dark); }
 
-  /* Week view */
   .week-table-wrap { overflow-x: auto; background: white; }
   .week-table-wrap::-webkit-scrollbar { height: 0; }
   table { width: 100%; border-collapse: collapse; min-width: 520px; }
@@ -108,7 +109,6 @@
   tfoot tr td { background: var(--surface); font-weight: 600; font-size: 13px; }
   .total-pay { color: var(--green-dark); font-size: 14px; font-weight: 700; }
 
-  /* Summary/payroll view */
   .payroll-section { padding: 14px; }
   .payroll-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
   .payroll-card { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px; }
@@ -118,33 +118,46 @@
   .payroll-wname { font-size: 14px; font-weight: 500; }
   .payroll-days { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .payroll-amount { font-size: 17px; font-weight: 700; color: var(--green); }
-  .payroll-total-card { background: var(--green); border-radius: 14px; padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center; }
+  .payroll-total-card { background: var(--green); border-radius: 14px; padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .ptl { font-size: 13px; opacity: 0.8; }
   .ptv { font-size: 28px; font-weight: 700; }
+  .export-btns { display: flex; gap: 10px; margin-bottom: 16px; }
+  .exp-btn { flex: 1; padding: 13px 10px; border-radius: 12px; border: 1.5px solid var(--border); background: white; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; color: var(--text); }
+  .exp-btn.whatsapp { border-color: #25D366; color: #128C4A; background: #F0FDF6; }
+  .exp-btn.excel { border-color: #217346; color: #217346; background: #F0FDF6; }
 
-  /* Bottom bar */
-  .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
-    background: white;
-    border-top: 1px solid var(--border);
-    padding: 8px 16px calc(var(--safe-bottom) + 8px);
-    display: flex;
-    gap: 8px;
-    z-index: 100;
-  }
+  .casual-section { background: white; border-top: 3px solid var(--amber); margin-top: 8px; }
+  .casual-header { padding: 12px 14px 8px; }
+  .casual-title { font-size: 13px; font-weight: 600; color: var(--amber-dark); text-transform: uppercase; letter-spacing: 0.4px; }
+  .casual-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .casual-add-row { display: flex; gap: 8px; padding: 0 14px 10px; }
+  .casual-input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-size: 13px; color: var(--text); background: var(--surface); outline: none; font-family: inherit; }
+  .casual-input:focus { border-color: var(--amber); }
+  .casual-pay-input { width: 90px; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-size: 13px; color: var(--text); background: var(--surface); outline: none; font-family: inherit; }
+  .casual-pay-input:focus { border-color: var(--amber); }
+  .casual-add-btn { background: var(--amber); color: white; border: none; border-radius: 8px; padding: 9px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .casual-add-btn:active { background: var(--amber-dark); }
+  .casual-list { border-top: 1px solid var(--border); }
+  .casual-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  .casual-row:last-child { border-bottom: none; }
+  .casual-name { flex: 1; }
+  .casual-name-text { font-size: 14px; font-weight: 500; }
+  .casual-note-text { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .casual-pay { font-size: 14px; font-weight: 600; color: var(--amber-dark); margin-right: 4px; }
+  .casual-del { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 2px 6px; border-radius: 6px; line-height: 1; }
+  .casual-del:active { background: var(--red-pale); color: var(--red); }
+  .casual-empty { padding: 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
+  .casual-total { display: flex; justify-content: space-between; padding: 11px 14px; background: var(--amber-pale); font-size: 13px; font-weight: 600; color: var(--amber-dark); border-top: 1px solid var(--border); }
+
+  .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); padding: 8px 16px calc(var(--safe-bottom) + 8px); display: flex; gap: 8px; z-index: 100; }
   .bottom-btn { flex: 1; padding: 11px; border-radius: 11px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-align: center; }
   .btn-reset { background: var(--surface); color: var(--text-mid); }
   .btn-reset:active { background: var(--border); }
-  .btn-export { background: var(--green); color: white; }
-  .btn-export:active { background: var(--green-dark); }
+  .btn-whatsapp { background: #25D366; color: white; }
+  .btn-whatsapp:active { background: #128C4A; }
 
-  /* Toast */
   .toast { position: fixed; top: calc(var(--safe-top) + 90px); left: 50%; transform: translateX(-50%); background: #222; color: white; border-radius: 20px; padding: 10px 20px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; }
-
-  .empty-msg { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -159,9 +172,9 @@
       </div>
     </div>
     <div class="week-ctrl">
-      <button class="week-btn" onclick="changeWeek(-1)" aria-label="Previous week">&#8249;</button>
+      <button class="week-btn" onclick="changeWeek(-1)">&#8249;</button>
       <div class="week-label" id="weekLabel"></div>
-      <button class="week-btn" onclick="changeWeek(1)" aria-label="Next week">&#8250;</button>
+      <button class="week-btn" onclick="changeWeek(1)">&#8250;</button>
     </div>
   </div>
   <div class="tabs">
@@ -178,42 +191,102 @@
   <div class="stat-chip"><div class="val" id="s-days">0</div><div class="lbl">Days logged</div></div>
 </div>
 
+<div class="sync-bar" id="syncBar">
+  <div class="sync-dot"></div>
+  <span id="syncMsg">Connected to Google Sheets</span>
+</div>
+
 <div class="content" id="mainContent"></div>
 
 <div class="bottom-bar">
   <button class="bottom-btn btn-reset" onclick="confirmReset()">&#8635; Reset week</button>
-  <button class="bottom-btn btn-export" onclick="exportSummary()">&#8595; Export summary</button>
+  <button class="bottom-btn btn-whatsapp" onclick="shareWhatsApp()">&#128172; WhatsApp</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzwuAdlGWtORSxXcBW5BovVfgxGbFUdIqblzdGxZreZ_shvs3PMparT_x5iyxOFeIViA/exec';
+
 const WORKERS = [
-  { name: 'Navdeep',   rate: 330, color: '#0F6E56', bg: '#E1F5EE' },
-  { name: 'Joban',     rate: 230, color: '#185FA5', bg: '#E6F1FB' },
-  { name: 'Lakhvir',  rate: 290, color: '#BA7517', bg: '#FAEEDA' },
-  { name: 'Baljeet',  rate: 280, color: '#993556', bg: '#FBEAF0' },
-  { name: 'Gurcharan',rate: 340, color: '#533AB7', bg: '#EEEDFE' },
-  { name: 'Ricky',rate: 280, color: '#533AB7', bg: '#EEEDFE' }
+  { name: 'Navdeep',    rate: 330, color: '#0F6E56', bg: '#E1F5EE' },
+  { name: 'Joban',      rate: 230, color: '#185FA5', bg: '#E6F1FB' },
+  { name: 'Lakhvir',   rate: 290, color: '#BA7517', bg: '#FAEEDA' },
+  { name: 'Baljeet',   rate: 280, color: '#993556', bg: '#FBEAF0' },
+  { name: 'Gurcharan', rate: 340, color: '#533AB7', bg: '#EEEDFE' },
+  { name: 'Ricky',     rate: 280, color: '#0F6E56', bg: '#E1F5EE' }
 ];
 
 const STATUS_CYCLE = ['', 'P', 'H', 'A'];
-const STATUS_LABEL = { '': '—', P: 'Present', H: 'Half', A: 'Absent' };
+const STATUS_LABEL = { '': '—', P: 'Present', H: 'Half day', A: 'Absent' };
 
 let weekOffset = 0;
 let currentTab = 'day';
 let att = {};
+let casuals = [];
 
-function storageKey(offset) { return 'jdb_att_w' + offset; }
+function weekKey() {
+  const mon = getMonday(weekOffset);
+  return mon.toISOString().slice(0, 10);
+}
 function dayKey(wi, di) { return wi + '_' + di; }
+function storageKey(wk) { return 'jdb_att_' + wk; }
+function casualStorageKey() { return 'jdb_casual_' + weekKey(); }
 
 function load() {
-  const raw = localStorage.getItem(storageKey(weekOffset));
+  const raw = localStorage.getItem(storageKey(weekKey()));
   att = raw ? JSON.parse(raw) : {};
 }
+function saveLocal() {
+  localStorage.setItem(storageKey(weekKey()), JSON.stringify(att));
+}
+function loadCasuals() {
+  const raw = localStorage.getItem(casualStorageKey());
+  casuals = raw ? JSON.parse(raw) : [];
+}
+function saveCasuals() {
+  localStorage.setItem(casualStorageKey(), JSON.stringify(casuals));
+}
 
-function save() {
-  localStorage.setItem(storageKey(weekOffset), JSON.stringify(att));
+function setSyncStatus(state, msg) {
+  const bar = document.getElementById('syncBar');
+  const txt = document.getElementById('syncMsg');
+  bar.className = 'sync-bar' + (state ? ' ' + state : '');
+  txt.textContent = msg;
+}
+
+async function saveToSheets(wi, di, status) {
+  setSyncStatus('syncing', 'Saving to Google Sheets...');
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save', week: weekKey(), worker: WORKERS[wi].name, day: di, status: status })
+    });
+    setSyncStatus('', 'Saved to Google Sheets ✓');
+    setTimeout(() => setSyncStatus('', 'Connected to Google Sheets'), 2000);
+  } catch(e) {
+    setSyncStatus('error', 'Saved locally — no internet');
+    setTimeout(() => setSyncStatus('', 'Connected to Google Sheets'), 3000);
+  }
+}
+
+async function loadFromSheets() {
+  setSyncStatus('syncing', 'Loading from Google Sheets...');
+  try {
+    const res = await fetch(SCRIPT_URL + '?week=' + weekKey());
+    const data = await res.json();
+    if (Object.keys(data).length > 0) {
+      Object.keys(data).forEach(k => { if (data[k]) att[k] = data[k]; });
+      saveLocal();
+    }
+    setSyncStatus('', 'Connected to Google Sheets');
+  } catch(e) {
+    setSyncStatus('error', 'Offline — showing local data');
+  }
+  updateSummary();
+  renderCurrent();
 }
 
 function getMonday(offset) {
@@ -227,26 +300,12 @@ function getMonday(offset) {
 function getWeekDays() {
   const mon = getMonday(weekOffset);
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(mon);
-    d.setDate(mon.getDate() + i);
-    return d;
+    const d = new Date(mon); d.setDate(mon.getDate() + i); return d;
   });
 }
 
-function todayDayIndex() {
-  const d = new Date().getDay();
-  return (d + 6) % 7;
-}
-
+function todayDayIndex() { return (new Date().getDay() + 6) % 7; }
 function isCurrentWeek() { return weekOffset === 0; }
-
-function fmtShort(d) {
-  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
-}
-
-function fmtDayShort(d) {
-  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric' });
-}
 
 function fmtWeekRange() {
   const days = getWeekDays();
@@ -264,33 +323,31 @@ function calcWorkerPay(wi) {
   return total;
 }
 
-function calcTotalPayroll() {
-  return WORKERS.reduce((sum, _, wi) => sum + calcWorkerPay(wi), 0);
+function calcCasualTotal() {
+  return casuals.reduce((sum, c) => sum + c.pay, 0);
 }
 
-function cycleStatus(wi, di) {
-  const k = dayKey(wi, di);
-  const cur = att[k] || '';
-  const idx = STATUS_CYCLE.indexOf(cur);
-  const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
-  att[k] = next;
-  save();
-  updateSummary();
-  if (currentTab === 'day') renderDay();
-  else if (currentTab === 'week') renderWeek();
-  else renderPayroll();
+function calcTotalPayroll() {
+  return WORKERS.reduce((sum, _, wi) => sum + calcWorkerPay(wi), 0) + calcCasualTotal();
+}
+
+function calcTodayTotal(di) {
+  return WORKERS.reduce((sum, w, wi) => {
+    const s = att[dayKey(wi, di)] || '';
+    if (s === 'P') return sum + w.rate;
+    if (s === 'H') return sum + w.rate * 0.5;
+    return sum;
+  }, 0);
 }
 
 function updateSummary() {
   const di = todayDayIndex();
   let present = 0, absent = 0, daysLogged = 0;
   WORKERS.forEach((_, wi) => {
-    const todayStatus = att[dayKey(wi, di)] || '';
-    if (todayStatus === 'P' || todayStatus === 'H') present++;
-    if (todayStatus === 'A') absent++;
-    for (let d = 0; d < 7; d++) {
-      if (att[dayKey(wi, d)]) daysLogged++;
-    }
+    const s = att[dayKey(wi, di)] || '';
+    if (s === 'P' || s === 'H') present++;
+    if (s === 'A') absent++;
+    for (let d = 0; d < 7; d++) { if (att[dayKey(wi, d)]) daysLogged++; }
   });
   document.getElementById('s-present').textContent = present;
   document.getElementById('s-absent').textContent = absent;
@@ -298,57 +355,75 @@ function updateSummary() {
   document.getElementById('s-days').textContent = daysLogged;
 }
 
-function renderDay() {
-  const days = getWeekDays();
-  const di = isCurrentWeek() ? todayDayIndex() : 0;
-  const day = days[di];
-  let html = `<div class="day-date-header">
-    <div>
-      <div class="day-date-label">${day.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-      <div class="day-date-sub">Tap a button to mark attendance</div>
-    </div>
-  </div>`;
-
-  WORKERS.forEach((w, wi) => {
-    const s = att[dayKey(wi, di)] || '';
-    html += `<div class="worker-card">
-      <div class="avatar" style="background:${w.bg};color:${w.color}">${w.name.slice(0,2).toUpperCase()}</div>
-      <div class="worker-info">
-        <div class="worker-name">${w.name}</div>
-        <div class="worker-rate">$${w.rate}/day${s === 'H' ? ' · $' + (w.rate * 0.5).toFixed(0) + ' today' : s === 'P' ? ' · $' + w.rate + ' today' : ''}</div>
-      </div>
-      <div class="status-group">
-        <button class="s-btn ${s === 'P' ? 'active-P' : ''}" onclick="setStatus(${wi},${di},'P')">P</button>
-        <button class="s-btn ${s === 'H' ? 'active-H' : ''}" onclick="setStatus(${wi},${di},'H')">½</button>
-        <button class="s-btn ${s === 'A' ? 'active-A' : ''}" onclick="setStatus(${wi},${di},'A')">A</button>
-      </div>
-    </div>`;
-  });
-
-  document.getElementById('mainContent').innerHTML = html;
+async function setStatus(wi, di, status) {
+  const k = dayKey(wi, di);
+  att[k] = (att[k] === status) ? '' : status;
+  saveLocal();
+  updateSummary();
+  renderCurrent();
+  await saveToSheets(wi, di, att[k]);
 }
 
-function setStatus(wi, di, status) {
-  const k = dayKey(wi, di);
-  if (att[k] === status) {
-    att[k] = '';
-  } else {
-    att[k] = status;
-  }
-  save();
-  updateSummary();
+function renderCurrent() {
   if (currentTab === 'day') renderDay();
   else if (currentTab === 'week') renderWeek();
   else renderPayroll();
 }
 
+function renderDay() {
+  const days = getWeekDays();
+  const di = isCurrentWeek() ? todayDayIndex() : 0;
+  const day = days[di];
+  const todayTotal = calcTodayTotal(di);
+  const weekTotal = calcTotalPayroll();
+
+  let html = `
+  <div class="today-totals-bar">
+    <div class="today-total-block">
+      <div class="today-total-label">Today's total salary</div>
+      <div class="today-total-value">$${todayTotal.toLocaleString('en-AU')}</div>
+    </div>
+    <div class="today-divider"></div>
+    <div class="today-total-block">
+      <div class="today-total-label">Week payroll so far</div>
+      <div class="today-total-value">$${weekTotal.toLocaleString('en-AU')}</div>
+    </div>
+  </div>
+  <div class="day-date-header">
+    <div class="day-date-label">${day.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+    <div class="day-date-sub">Tap P · ½ · A to mark attendance</div>
+  </div>`;
+
+  WORKERS.forEach((w, wi) => {
+    const s = att[dayKey(wi, di)] || '';
+    const weekPay = calcWorkerPay(wi);
+    const todayEarn = s === 'P' ? w.rate : s === 'H' ? w.rate * 0.5 : 0;
+    html += `<div class="worker-card">
+      <div class="avatar" style="background:${w.bg};color:${w.color}">${w.name.slice(0,2).toUpperCase()}</div>
+      <div class="worker-info">
+        <div class="worker-name">${w.name}</div>
+        <div class="worker-rate">$${w.rate}/day${s ? ' · <span style="color:var(--green-mid);font-weight:600">$' + todayEarn.toFixed(0) + ' today</span>' : ''}</div>
+        <div class="worker-weekly">This week so far: <strong>$${weekPay.toFixed(0)}</strong></div>
+      </div>
+      <div class="status-group">
+        <button class="s-btn ${s==='P'?'active-P':''}" onclick="setStatus(${wi},${di},'P')">P</button>
+        <button class="s-btn ${s==='H'?'active-H':''}" onclick="setStatus(${wi},${di},'H')">½</button>
+        <button class="s-btn ${s==='A'?'active-A':''}" onclick="setStatus(${wi},${di},'A')">A</button>
+      </div>
+    </div>`;
+  });
+
+  loadCasuals();
+  html += renderCasualSection();
+  document.getElementById('mainContent').innerHTML = html;
+}
+
 function renderWeek() {
   const days = getWeekDays();
   const todayDi = isCurrentWeek() ? todayDayIndex() : -1;
-
   let th = `<tr><th class="name-col">Worker</th>`;
   days.forEach((d, i) => {
-    th += `<th class="${i === todayDi ? 'today-col' : ''}">${d.toLocaleDateString('en-AU', { weekday: 'short' })}<br><span style="font-weight:400;font-size:10px">${d.getDate()}</span></th>`;
+    th += `<th class="${i===todayDi?'today-col':''}">${d.toLocaleDateString('en-AU',{weekday:'short'})}<br><span style="font-weight:400;font-size:10px">${d.getDate()}</span></th>`;
   });
   th += `<th>Pay</th></tr>`;
 
@@ -361,83 +436,225 @@ function renderWeek() {
     </div></td>`;
     days.forEach((_, di) => {
       const s = att[dayKey(wi, di)] || '';
-      rows += `<td class="${di === todayDi ? 'today-col' : ''}">
-        <button class="week-cell ${s}" onclick="cycleStatus(${wi},${di})" title="${STATUS_LABEL[s]}">${s || '·'}</button>
+      rows += `<td class="${di===todayDi?'today-col':''}">
+        <button class="week-cell ${s}" onclick="cycleStatus(${wi},${di})">${s||'·'}</button>
       </td>`;
     });
     rows += `<td class="pay-cell">$${pay.toFixed(0)}</td></tr>`;
   });
 
   const total = calcTotalPayroll();
-  const foot = `<tr><td class="name-col" style="font-size:13px;color:#555">Total</td><td colspan="7"></td><td class="total-pay">$${total.toFixed(0)}</td></tr>`;
-
+  const foot = `<tr><td class="name-col" style="color:#555">Total</td><td colspan="7"></td><td class="total-pay">$${total.toFixed(0)}</td></tr>`;
   document.getElementById('mainContent').innerHTML = `<div class="week-table-wrap">
     <table><thead>${th}</thead><tbody>${rows}</tbody><tfoot>${foot}</tfoot></table>
   </div>`;
 }
 
+async function cycleStatus(wi, di) {
+  const k = dayKey(wi, di);
+  const cur = att[k] || '';
+  const idx = STATUS_CYCLE.indexOf(cur);
+  att[k] = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+  saveLocal();
+  updateSummary();
+  renderCurrent();
+  await saveToSheets(wi, di, att[k]);
+}
+
 function renderPayroll() {
   const days = getWeekDays();
+  const weekStr = days[0].toLocaleDateString('en-AU',{day:'numeric',month:'short'}) + ' – ' + days[6].toLocaleDateString('en-AU',{day:'numeric',month:'short'});
   let rows = '';
   WORKERS.forEach((w, wi) => {
     const pay = calcWorkerPay(wi);
-    let pDays = 0, hDays = 0, aDays = 0;
-    for (let di = 0; di < 7; di++) {
-      const s = att[dayKey(wi, di)] || '';
-      if (s === 'P') pDays++;
-      else if (s === 'H') hDays++;
-      else if (s === 'A') aDays++;
+    let pDays=0, hDays=0, aDays=0;
+    for (let di=0;di<7;di++) {
+      const s=att[dayKey(wi,di)]||'';
+      if(s==='P')pDays++; else if(s==='H')hDays++; else if(s==='A')aDays++;
     }
-    const parts = [];
-    if (pDays) parts.push(pDays + ' day' + (pDays > 1 ? 's' : '') + ' present');
-    if (hDays) parts.push(hDays + ' half day' + (hDays > 1 ? 's' : ''));
-    if (aDays) parts.push(aDays + ' absent');
+    const parts=[];
+    if(pDays) parts.push(pDays+' day'+(pDays>1?'s':'')+' present');
+    if(hDays) parts.push(hDays+' half day'+(hDays>1?'s':''));
+    if(aDays) parts.push(aDays+' absent');
     rows += `<div class="payroll-row">
       <div class="avatar" style="background:${w.bg};color:${w.color};width:38px;height:38px;font-size:12px">${w.name.slice(0,2).toUpperCase()}</div>
       <div class="payroll-worker">
         <div class="payroll-wname">${w.name}</div>
-        <div class="payroll-days">${parts.length ? parts.join(' · ') : 'No attendance marked'} · $${w.rate}/day</div>
+        <div class="payroll-days">${parts.length?parts.join(' · '):'No attendance marked'} · $${w.rate}/day</div>
       </div>
       <div class="payroll-amount">$${pay.toFixed(0)}</div>
     </div>`;
   });
 
-  const total = calcTotalPayroll();
-  const weekStr = days[0].toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + ' – ' + days[6].toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  loadCasuals();
+  if (casuals.length > 0) {
+    rows += `<div class="payroll-row" style="background:var(--amber-pale)">
+      <div style="flex:1;font-size:13px;font-weight:600;color:var(--amber-dark)">Casual workers</div>
+    </div>`;
+    casuals.forEach(c => {
+      rows += `<div class="payroll-row">
+        <div class="avatar" style="background:var(--amber-pale);color:var(--amber-dark);width:38px;height:38px;font-size:12px">CA</div>
+        <div class="payroll-worker">
+          <div class="payroll-wname">${c.name}</div>
+          <div class="payroll-days">${c.note || 'Casual worker'} · ${c.date}</div>
+        </div>
+        <div class="payroll-amount" style="color:var(--amber-dark)">$${c.pay.toFixed(0)}</div>
+      </div>`;
+    });
+  }
 
+  const total = calcTotalPayroll();
   document.getElementById('mainContent').innerHTML = `<div class="payroll-section">
     <div class="payroll-title">Week of ${weekStr}</div>
     <div class="payroll-card">${rows}</div>
     <div class="payroll-total-card">
-      <div><div class="ptl">Total weekly payroll</div><div style="font-size:11px;opacity:0.7;margin-top:3px">5 workers · week ending ${days[6].toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</div></div>
+      <div>
+        <div class="ptl">Total weekly payroll</div>
+        <div style="font-size:11px;opacity:0.7;margin-top:3px">${WORKERS.length} workers · week ending ${days[6].toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</div>
+      </div>
       <div class="ptv">$${total.toLocaleString('en-AU')}</div>
     </div>
+    <div class="export-btns">
+      <button class="exp-btn whatsapp" onclick="shareWhatsApp()">&#128172; WhatsApp</button>
+      <button class="exp-btn excel" onclick="exportExcel()">&#128202; Export Excel</button>
+    </div>
   </div>`;
+}
+
+function renderCasualSection() {
+  const listHtml = casuals.length === 0
+    ? '<div class="casual-empty">No casual workers added today</div>'
+    : '<div class="casual-list">'
+      + casuals.map((c, i) => `<div class="casual-row">
+          <div class="casual-name">
+            <div class="casual-name-text">${c.name}</div>
+            ${c.note ? '<div class="casual-note-text">' + c.note + '</div>' : ''}
+          </div>
+          <div class="casual-pay">$${c.pay.toFixed(0)}</div>
+          <button class="casual-del" onclick="deleteCasual(${i})">&#215;</button>
+        </div>`).join('')
+      + `<div class="casual-total"><span>Casual total</span><span>$${calcCasualTotal().toFixed(0)}</span></div>`
+      + '</div>';
+
+  return `<div class="casual-section">
+    <div class="casual-header">
+      <div class="casual-title">Casual / One-day workers</div>
+      <div class="casual-subtitle">Workers not on the regular list</div>
+    </div>
+    <div class="casual-add-row">
+      <input class="casual-input" id="casualName" type="text" placeholder="Worker name" autocomplete="off">
+      <input class="casual-pay-input" id="casualPay" type="number" placeholder="$Pay" min="0">
+    </div>
+    <div class="casual-add-row">
+      <input class="casual-input" id="casualNote" type="text" placeholder="Note e.g. labourer, driver (optional)" autocomplete="off">
+      <button class="casual-add-btn" onclick="addCasual()">+ Add</button>
+    </div>
+    ${listHtml}
+  </div>`;
+}
+
+function addCasual() {
+  const name = document.getElementById('casualName').value.trim();
+  const pay = parseFloat(document.getElementById('casualPay').value);
+  const note = document.getElementById('casualNote').value.trim();
+  if (!name || !pay || pay <= 0) { showToast('Enter a name and pay amount'); return; }
+  casuals.push({ name, pay, note, date: new Date().toLocaleDateString('en-AU') });
+  saveCasuals();
+  updateSummary();
+  renderCurrent();
+  showToast(name + ' added!');
+}
+
+function deleteCasual(idx) {
+  casuals.splice(idx, 1);
+  saveCasuals();
+  updateSummary();
+  renderCurrent();
+}
+
+function buildWhatsAppText() {
+  const days = getWeekDays();
+  const weekStr = days[0].toLocaleDateString('en-AU',{day:'numeric',month:'short'}) + ' – ' + days[6].toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+  let msg = '*JDB Group Scaffolding — Weekly Payroll*\n';
+  msg += 'Week: ' + weekStr + '\n';
+  msg += '─────────────────────\n';
+  WORKERS.forEach((w, wi) => {
+    const pay = calcWorkerPay(wi);
+    let pDays=0, hDays=0, aDays=0;
+    for(let di=0;di<7;di++){
+      const s=att[dayKey(wi,di)]||'';
+      if(s==='P')pDays++; else if(s==='H')hDays++; else if(s==='A')aDays++;
+    }
+    msg += '\n*' + w.name + '*\n';
+    if(pDays) msg += '✅ ' + pDays + ' day' + (pDays>1?'s':'') + ' present\n';
+    if(hDays) msg += '🔶 ' + hDays + ' half day' + (hDays>1?'s':'') + '\n';
+    if(aDays) msg += '❌ ' + aDays + ' absent\n';
+    msg += '💰 $' + pay.toFixed(0) + '\n';
+  });
+  if (casuals.length > 0) {
+    msg += '\n*Casual workers*\n';
+    casuals.forEach(c => {
+      msg += '👷 ' + c.name + (c.note?' ('+c.note+')':'') + ' — $' + c.pay.toFixed(0) + '\n';
+    });
+  }
+  msg += '\n─────────────────────\n';
+  msg += '*TOTAL: $' + calcTotalPayroll().toLocaleString('en-AU') + '*\n';
+  msg += '_Generated by JDB Attendance App_';
+  return msg;
+}
+
+function shareWhatsApp() {
+  const text = buildWhatsAppText();
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  showToast('Opening WhatsApp...');
+}
+
+function exportExcel() {
+  const days = getWeekDays();
+  const weekStr = days[0].toLocaleDateString('en-AU') + ' to ' + days[6].toLocaleDateString('en-AU');
+  const dayNames = days.map(d => d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'}));
+  let csv = 'Worker,Rate/Day,' + dayNames.join(',') + ',Weekly Pay\n';
+  WORKERS.forEach((w, wi) => {
+    const pay = calcWorkerPay(wi);
+    const statuses = [];
+    for(let di=0;di<7;di++) statuses.push(STATUS_LABEL[att[dayKey(wi,di)]||'']||'—');
+    csv += w.name + ',$' + w.rate + ',' + statuses.join(',') + ',$' + pay.toFixed(0) + '\n';
+  });
+  if (casuals.length > 0) {
+    csv += '\nCasual Workers,,,,,,,,\n';
+    casuals.forEach(c => { csv += c.name + (c.note?'('+c.note+')':'') + ',' + c.date + ',,,,,,,,$' + c.pay.toFixed(0) + '\n'; });
+  }
+  csv += '\nTOTAL PAYROLL:,,,,,,,,$' + calcTotalPayroll().toFixed(0) + '\nWeek: ' + weekStr;
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'JDB_Payroll_' + days[0].toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('Excel file downloaded!');
 }
 
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'day') renderDay();
-  else if (tab === 'week') renderWeek();
-  else renderPayroll();
+  renderCurrent();
 }
 
 function changeWeek(dir) {
   weekOffset += dir;
   load();
+  loadCasuals();
   document.getElementById('weekLabel').textContent = fmtWeekRange();
-  updateSummary();
-  switchTab(currentTab);
+  setSyncStatus('syncing', 'Loading from Google Sheets...');
+  loadFromSheets();
 }
 
 function confirmReset() {
   if (confirm('Reset all attendance for this week?')) {
     att = {};
-    save();
+    saveLocal();
     updateSummary();
-    switchTab(currentTab);
+    renderCurrent();
     showToast('Week cleared');
   }
 }
@@ -446,37 +663,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-function exportSummary() {
-  const days = getWeekDays();
-  const weekStr = days[0].toLocaleDateString('en-AU') + ' to ' + days[6].toLocaleDateString('en-AU');
-  let text = 'JDB Group Scaffolding — Weekly Payroll Summary\n';
-  text += 'Week: ' + weekStr + '\n';
-  text += '─────────────────────────────────────────\n\n';
-
-  WORKERS.forEach((w, wi) => {
-    const pay = calcWorkerPay(wi);
-    text += w.name + ' ($' + w.rate + '/day)\n';
-    days.forEach((d, di) => {
-      const s = att[dayKey(wi, di)] || '';
-      const label = s === 'P' ? 'Present — $' + w.rate : s === 'H' ? 'Half day — $' + (w.rate * 0.5).toFixed(0) : s === 'A' ? 'Absent — $0' : 'Not marked';
-      text += '  ' + d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) + ': ' + label + '\n';
-    });
-    text += '  Weekly total: $' + pay.toFixed(0) + '\n\n';
-  });
-
-  text += '─────────────────────────────────────────\n';
-  text += 'TOTAL PAYROLL: $' + calcTotalPayroll().toLocaleString('en-AU') + '\n';
-  text += 'Generated: ' + new Date().toLocaleString('en-AU') + '\n';
-
-  const blob = new Blob([text], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'JDB_Payroll_' + days[0].toISOString().slice(0, 10) + '.txt';
-  a.click();
-  showToast('Summary exported!');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 if ('serviceWorker' in navigator) {
@@ -484,9 +671,11 @@ if ('serviceWorker' in navigator) {
 }
 
 load();
+loadCasuals();
 document.getElementById('weekLabel').textContent = fmtWeekRange();
 updateSummary();
 renderDay();
+loadFromSheets();
 </script>
 </body>
 </html>
